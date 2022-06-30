@@ -16,7 +16,6 @@ def readfile():
                     break
             listinp.append(line)
 
-print("ok")
 
 
 listinp = []
