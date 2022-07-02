@@ -6,7 +6,7 @@ def readfile():
         if line != "":
             counter = counter+1
             count = 0
-            for i in range(0,len(line)):
+            for i in range(len(line)):
                 if line[i] == " ":
                     count = count +1
                 else:
