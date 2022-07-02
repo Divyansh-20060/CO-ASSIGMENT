@@ -86,6 +86,17 @@ Opp_Dict = {
     "hlt" : ("10011", "F","0"),
     "var":("UNCLEAR","UNCLEAR","1")
 }
+my_dict={"add" : ("10000", 'A')}
+f=open("pro.txt","r")
+line=f.readline()
+line_split=line.split()
+#print(line_split)
+if((line_split[0]=="ADD") and my_dict["add"][1]=='A'):
+    x,y=int(line_split[1]),int(line_split[2])
+    sum=x+y
+    print(sum)
+else:
+    print("Invalid Instruction")
 
 
 listout = []
