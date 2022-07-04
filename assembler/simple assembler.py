@@ -16,6 +16,12 @@ def readfile():
                     break
             listinp.append(line)
 
+def check_number(s):
+    for i in range(len(s)):
+        if s[i].isdigit() != True:
+            return False
+    return True
+
 def Label_Handling(input): #chckes for labels and halt
 
     halt = False
@@ -87,14 +93,18 @@ def Register_Handling(reg): #Handles registers
             listerror.append("Invalid register value")
 
 def d2b(num): #Converts decimal number to a binary number of 8 bits
-    s = bin(num).replace("0b", "")
-    s = str(s)
-    l = len(s)
-    if len(s) < 8:
-        for i in range(0,l):
-            s = "0" + s
+    if (check_number(num) == True):
+        s = bin(num).replace("0b", "")
+        s = str(s)
+        l = len(s)
+        if len(s) < 8:
+            for i in range(0,l):
+                s = "0" + s
 
-    return s
+        return s
+
+    else:
+        listerror.append("Incorrect immediate value")
 
 
 
