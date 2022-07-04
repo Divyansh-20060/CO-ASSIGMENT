@@ -16,12 +16,6 @@ def readfile():
                     break
             listinp.append(line)
 
-def check_number(s):
-    for i in range(len(s)):
-        if s[i].isdigit() != True:
-            return False
-    return True
-
 def Label_Handling(input): #chckes for labels and halt
 
     halt = False
@@ -93,24 +87,22 @@ def Register_Handling(reg): #Handles registers
             listerror.append("Invalid register value")
 
 def d2b(num): #Converts decimal number to a binary number of 8 bits
-    if (check_number(num) == True):
-        s = bin(num).replace("0b", "")
-        s = str(s)
-        l = len(s)
-        if len(s) < 8:
-            for i in range(0,l):
-                s = "0" + s
 
-        return s
+    s = bin(num).replace("0b", "")
+    s = str(s)
+    l = len(s)
+    if len(s) < 8:
+        for i in range(0,l):
+            s = "0" + s
 
-    else:
-        listerror.append("Incorrect immediate value")
+    return s
 
 
 
 def Assembler(input): #the main assembler function
     for i in range (0, len(input)):
         binary = ""
+
         split = input[i].split()
 
         if split[0][:-1] in label_dict:
@@ -138,16 +130,16 @@ def Assembler(input): #the main assembler function
             elif len(split) == 3 and Opp_Dict[split[0]][1] == "B":
                 binary = binary + Opp_Dict[split[0]][0]
 
-                reg = Register_Handling(split[1],)
+                reg = Register_Handling(split[1])
                 if reg:
                     binary = binary + reg
 
                 if int(split[2][1]) < 0 or int(split[2][1]) > 255:
-                    listerror.append("Immediate value if out of bounds")
+                    listerror.append("Immediate value is out of bounds")
                 else:
-                    if (check_number(var_dict[split[2][1:]]) == True):
-                        o = d2b(split[2][1:])
-                        binary = binary + o
+
+                    o = d2b(int(split[2][1:]))
+                    binary = binary + o
 
             elif len(split) == 3 and Opp_Dict[split[0]][1] == "C":
                 binary = binary + Opp_Dict[split[0]][0] + "00000"
@@ -157,8 +149,9 @@ def Assembler(input): #the main assembler function
                     binary = binary + reg
 
                 if split[0] == "mov":
-                    if split[2] in reg_add:
-                        binary = binary + reg[split[2]]
+                    ok = split[2]
+                    if ok in reg_add:
+                        binary = binary + ok
                     else:
                         listerror.append("Invalid register value")
 
@@ -175,9 +168,9 @@ def Assembler(input): #the main assembler function
                 if reg:
                     binary = binary + reg
                 if split[2] in var_dict:
-                    if(check_number(var_dict[split[2]]) == True):
-                        o = d2b(int(var_dict[split[2]]))
-                        binary = binary + o
+
+                    o = d2b(int(var_dict[split[2]]))
+                    binary = binary + o
 
 
                 else:
@@ -190,9 +183,9 @@ def Assembler(input): #the main assembler function
                 binary = binary + Opp_Dict[split[0]][0] + "000"
 
                 if split[1] in label_dict:
-                    if (check_number(var_dict[split[1]]) == True):
-                        o = d2b(int(label_dict[split[1]]))
-                        binary = binary + o
+
+                    o = d2b(int(label_dict[split[1]]))
+                    binary = binary + o
 
                 else:
                     if split[1] in var_dict:
