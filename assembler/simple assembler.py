@@ -233,7 +233,7 @@ if((line_split[0]=="ADD") and my_dict["add"][1]=='A'):
     sum=x+y
     print(sum)
 else:
-    print("Invalid Instruction")'
+    print("Invalid Instruction")
 
 #Variable Dictionary
 var_dict ={}
