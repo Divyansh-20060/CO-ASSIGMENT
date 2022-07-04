@@ -145,7 +145,7 @@ def Assembler(input): #the main assembler function
                 if int(split[2][1]) < 0 or int(split[2][1]) > 255:
                     listerror.append("Immediate value if out of bounds")
                 else:
-                    if (check_number(var_dict[split[2]]) == True):
+                    if (check_number(var_dict[split[2][1:]]) == True):
                         o = d2b(split[2][1:])
                         binary = binary + o
 
@@ -190,7 +190,7 @@ def Assembler(input): #the main assembler function
                 binary = binary + Opp_Dict[split[0]][0] + "000"
 
                 if split[1] in label_dict:
-                    if (check_number(var_dict[split[2]]) == True):
+                    if (check_number(var_dict[split[1]]) == True):
                         o = d2b(int(label_dict[split[1]]))
                         binary = binary + o
 
