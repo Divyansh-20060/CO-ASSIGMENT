@@ -12,52 +12,190 @@ def readfile():
                 else:
                     count = 0
                 if count > 1 or line[i] == '\t':
-                    listerror["syntax error"] = counter
+                    listerror.append("invalid syntax error")
                     break
             listinp.append(line)
 
+def Label_Handling(input): #chckes for labels and halt
+
+    halt = False
+    counter = 0
+
+    i = len(input)
+    for j in range(0,i):
+        split = input[j].split()
+        if split[0] not in Opp_Dict and split[0] != "var":
+
+            if split[0][-1] == ":":
+                label_dict[split[0][:-1]] = counter
+                counter = counter + 1
+
+                if len(split) > 1:
+
+                    if split[1] == "hlt":
+                        halt = True
+                        if j == (i-1):
+                            return
+                        else:
+                            listerror.append("hlt is not at the end")
+                            return
+                # else:
+                #     listerror.append("invalid syntax error")
+
+            else:
+                listerror.append("invalid syntax error")
+
+        if split[0] == "hlt":
+            halt = True
+            if j == (i-1):
+                return
+            else:
+                listerror.append("hlt is not at the end")
+                return
 
 
+    if halt == False:
+        listerror.append("hlt is missing")
 
+    return
 
-def Assembler(input, Opp_Dict):
-    for i in range(0,len(input)):
-        split = input[i].split()
-        out = ""
-        #if split[0] in Opp_Dict:
+def Variable_Handling(input): #Checks for variables
+    counter = 0
+    i = len(input)
 
+    for j in range(0,i):
+        split = input[j].split()
+        if split[0] == "var":
+            if len(split) == 2 and split[1] != "var":
+                if j == counter:
+                    var_dict[split[1]] = counter
+                    counter = counter + 1
+                else:
+                    listerror.append("All variables must be defined at start")
+            else:
+                listerror.append("Invalid variable declaration")
 
-
-
-def Inst_Typo_Check(input,Opp_Dict): #input is a list of split instruction where input[0] is not var or a flag and does exist in OPP_Dict
-
-    parmeters = len(input) - 1
-
-    if(str(parmeters) != Opp_Dict[input][-1]):
-        #handle inadequate parameters
+def Register_Handling(reg): #Handles registers
+    if reg in reg_add and reg != "FLAGS":
+        return reg_add[reg]
 
     else:
-        Type = Opp_Dict[input][1]
+        if reg == "FLAGS":
+            listerror.append("Illegal use of FLAGS register")
 
-        if Type == "A":
+        else:
+            listerror.append("Invalid register value")
 
-        if Type == "B":
+def d2b(num): #Converts decimal number to a binary number of 8 bits
+    s = bin(num).replace("0b", "")
+    s = str(s)
+    l = len(s)
+    if len(s) < 8:
+        for i in range(0,l):
+            s = "0" + s
 
-        if Type == "C":
-
-        if Type == "D":
-
-        if Type == "E":
-
-        if Type == "F"
-
-
-
-
-def Syntax_Errors(input):
+    return s
 
 
 
+def Assembler(input): #the main assembler function
+    for i in range (0, len(input)):
+        binary = ""
+        split = input[i].split()
+
+        if split[0][:-1] in label_dict:
+            split = split[1:]
+
+        if len(split) > 0 and split[0] not in Opp_Dict and split[0] != "var":
+            listerror.append("Invalid syntax error")
+
+        if len(split) > 2 and split[0] == "mov" and split[2][0] == "$":
+            Opp_Dict["mov"] = ("10010","B","2")
+
+        else:
+            Opp_Dict["mov"] = ("10011", "C","2")
+
+        if len(split) > 0 and split[0] != "var" and split[0] in Opp_Dict:
+
+            if len(split) == 4 and Opp_Dict[split[0]][1] == "A":
+                binary = binary + Opp_Dict[split[0]][0] + "00"      #opcode and unesd bits
+
+                for j in range(1,4):
+                    reg = Register_Handling(split[j])
+                    if reg:
+                        binary = binary + reg
+
+            elif len(split) == 3 and Opp_Dict[split[0]][1] == "B":
+                binary = binary + Opp_Dict[split[0]][0]
+
+                reg = Register_Handling(split[1],)
+                if reg:
+                    binary = binary + reg
+
+                if int(split[2][1]) < 0 or int(split[2][1]) > 255:
+                    listerror.append("Immediate value if out of bounds")
+                else:
+                    o = d2b(split[2][1:])
+                    binary = binary + o
+
+            elif len(split) == 3 and Opp_Dict[split[0]][1] == "C":
+                binary = binary + Opp_Dict[split[0]][0] + "00000"
+                reg = Register_Handling(split[1])
+
+                if reg:
+                    binary = binary + reg
+
+                if split[0] == "mov":
+                    if split[2] in reg_add:
+                        binary = binary + reg[split[2]]
+                    else:
+                        listerror.append("Invalid register value")
+
+                else:
+                    reg = Register_Handling(split[2])
+                    if reg:
+                        binary = binary + reg
+
+
+            elif len(split) == 3 and Opp_Dict[split[0]][1] == "D":
+                binary = binary + Opp_Dict[split[0]][0]
+                reg = Register_Handling(split[1])
+
+                if reg:
+                    binary = binary + reg
+                if split[2] in var_dict:
+                    o = d2b(int(var_dict[split[2]]))
+                    binary = binary + o
+
+                else:
+                    if split[2] in label_dict:
+                        listerror.append("label given where variable is required")
+                    else:
+                        listerror.append("Undefined variable")
+
+            elif len(split) == 2 and Opp_Dict[split[0]][1] == "E":
+                binary = binary + Opp_Dict[split[0]][0] + "000"
+
+                if split[1] in label_dict:
+                    o = d2b(int(label_dict[split[1]]))
+                    binary = binary + o
+
+                else:
+                    if split[1] in var_dict:
+                        listerror.append("variable given where label is required")
+                    else:
+                        listerror.append("Undefined label")
+
+            elif len(split) == 1 and Opp_Dict[split[0]][1] == "F":
+                binary = binary + Opp_Dict[split[0]][0] + "00000000000"
+
+            else:
+                if split[0] in Opp_Dict:
+                    listerror.append("Incorrectly parameters input")
+
+        listout.append(binary)
+
+    return
 
 
 #Register Address
@@ -65,29 +203,55 @@ reg_add = {"R0":"000", "R1":"001" , "R2":"010", "R3":"011", "R4":"100", "R5":"10
 
 #Operation Dictionary
 Opp_Dict = {
-    "add" : ("00000", "A","3"),
-    "sub" : ("00001", "A","3"),
+    "add" : ("10000", "A","3"),
+    "sub" : ("10001", "A","3"),
     "mov" : ("UNCLEAR","UNCLEAR","2"),
-    "ld" : ("00100", "D","2"),
-    "st" : ("00101", "D","2"),
-    "mul" : ("00110", "A","3"),
-    "div" : ("00111", "C","2"),
-    "rs" : ("01000", "B","2"),
-    "ls" : ("01001", "B","2"),
-    "xor" : ("01010", "A","3"),
-    "or" : ("01011", "A","3"),
-    "and" : ("01100", "A","3"),
-    "not" : ("01101", "C","2"),
-    "cmp" : ("01110", "C","2"),
-    "jmp" : ("01111", "E","1"),
-    "jlt" : ("10000", "E","1"),
-    "jgt" : ("10001", "E","1"),
-    "je": ("10010", "E","1"),
-    "hlt" : ("10011", "F","0"),
-    "var":("UNCLEAR","UNCLEAR","1")
+    "ld" : ("10100", "D","2"),
+    "st" : ("10101", "D","2"),
+    "mul" : ("10110", "A","3"),
+    "div" : ("10111", "C","2"),
+    "rs" : ("11000", "B","2"),
+    "ls" : ("11001", "B","2"),
+    "xor" : ("11010", "A","3"),
+    "or" : ("11011", "A","3"),
+    "and" : ("11100", "A","3"),
+    "not" : ("11101", "C","2"),
+    "cmp" : ("11110", "C","2"),
+    "jmp" : ("11111", "E","1"),
+    "jlt" : ("01100", "E","1"),
+    "jgt" : ("01101", "E","1"),
+    "je": ("01111", "E","1"),
+    "hlt" : ("01010", "F","0")
 }
 
+#Variable Dictionary
+var_dict ={}
 
+#Label Dictionary
+label_dict ={}
+
+#output list with binaries
 listout = []
+
+#input list with instructions
 listinp = []
+
+#list of errors generated
 listerror = []
+
+def main():
+    readfile()
+    Label_Handling(listinp)
+    Variable_Handling(listinp)
+    Assembler(listinp)
+
+    if len(listerror) == 0:
+        for i in listout:
+            print(i)
+
+    else:
+        for i in listerror:
+            print(i)
+
+
+main()
