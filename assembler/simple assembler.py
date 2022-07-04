@@ -223,17 +223,6 @@ Opp_Dict = {
     "je": ("01111", "E","1"),
     "hlt" : ("01010", "F","0")
 }
-my_dict={"add" : ("10000", 'A')}
-f=open("pro.txt","r")
-line=f.readline()
-line_split=line.split()
-#print(line_split)
-if((line_split[0]=="ADD") and my_dict["add"][1]=='A'):
-    x,y=int(line_split[1]),int(line_split[2])
-    sum=x+y
-    print(sum)
-else:
-    print("Invalid Instruction")
 
 #Variable Dictionary
 var_dict ={}
