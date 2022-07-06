@@ -1,10 +1,11 @@
 import sys
 
 def readfile():
-    counter = 0
+
+    counter = 0 #To cheak line number
     for line in sys.stdin:
-        if line != "" and line !="\n":
-            counter = counter+1
+        if line != "" and line != "\n":
+            counter = counter+1 #increment (next line)
             count = 0
             for i in range(len(line)):
                 if line[i] == " ":
@@ -12,6 +13,7 @@ def readfile():
                 else:
                     count = 0
                 if count > 1 or line[i] == '\t':
+                    #appending error in list error
                     listerror.append("invalid syntax error at line number " + str(counter))
                     break
 
@@ -19,30 +21,22 @@ def readfile():
     if counter > 256:
         listerror.append("number of instructions exceeded 256")
 
-    for i in listinp:
-        if i == "":
-            listinp.remove("")
-
 
 
 
 def Label_Handling(input): #chckes for labels and halt
 
-    for i in listinp:
-        if i == "":
-            listinp.remove("")
-
-    halt = False
+    halt = False #used as a flag to check that hlt is present or not
     counter = 0
 
     i = len(input)
     for j in range(0,i):
         split = input[j].split()
-        if split[0] not in Opp_Dict and split[0] != "var" and split[0] != "":
+        if split[0] not in Opp_Dict and split[0] != "var":
 
             if split[0][-1] == ":":
                 label_dict[split[0][:-1]] = counter
-                counter = counter + 1
+                counter = counter + 1 #counter to check that how many labels are appearing in the instruction
 
                 if len(split) > 1:
 
@@ -79,7 +73,7 @@ def Variable_Handling(input): #Checks for variables
         split = input[j].split()
         if split[0] == "var":
             if len(split) == 2 and split[1] != "var":
-                if j == counter:
+                if j == counter: #it checks if the j=counter and checking the ith variables.
                     var_dict[split[1]] = counter
                     counter = counter + 1
                 else:
@@ -88,8 +82,8 @@ def Variable_Handling(input): #Checks for variables
                 listerror.append("Invalid variable declaration at line number " + str(j+1))
 
 def Register_Handling(reg, j): #Handles registers
-    if reg in reg_add and reg != "FLAGS":
-        return reg_add[reg]
+    if reg in reg_add and reg != "FLAGS": #cheak whether reg in dict and not =FLAGS
+        return reg_add[reg]   #address of reg
 
     else:
         if reg == "FLAGS":
