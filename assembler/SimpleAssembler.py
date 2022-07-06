@@ -80,7 +80,7 @@ def Register_Handling(reg, j): #Handles registers
 
     else:
         if reg == "FLAGS":
-            listerror.append("Illegal use of FLAGS register at line number" + str(j + 1))
+            listerror.append("Illegal use of FLAGS register at line number " + str(j + 1))
 
         else:
             listerror.append("Invalid register value at line number" + str(j + 1))
@@ -197,7 +197,7 @@ def Assembler(input): #the main assembler function
 
             else:
                 if split[0] in Opp_Dict:
-                    listerror.append("Incorrectly parameters input")
+                    listerror.append("Incorrectly parameters input at line number " + str(i+1))
 
         listout.append(binary)
 
