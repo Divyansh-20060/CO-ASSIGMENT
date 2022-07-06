@@ -3,7 +3,7 @@ import sys
 def readfile():
     counter = 0
     for line in sys.stdin:
-        if line != "":
+        if line != "" and line !="\n":
             counter = counter+1
             count = 0
             for i in range(len(line)):
@@ -16,8 +16,21 @@ def readfile():
                     break
 
             listinp.append(line)
+    if counter > 256:
+        listerror.append("number of instructions exceeded 256")
+
+    for i in listinp:
+        if i == "":
+            listinp.remove("")
+
+
+
 
 def Label_Handling(input): #chckes for labels and halt
+
+    for i in listinp:
+        if i == "":
+            listinp.remove("")
 
     halt = False
     counter = 0
@@ -83,7 +96,7 @@ def Register_Handling(reg, j): #Handles registers
             listerror.append("Illegal use of FLAGS register at line number " + str(j + 1))
 
         else:
-            listerror.append("Invalid register value at line number" + str(j + 1))
+            listerror.append("Invalid register value at line number " + str(j + 1))
 
 def d2b(num): #Converts decimal number to a binary number of 8 bits
 
