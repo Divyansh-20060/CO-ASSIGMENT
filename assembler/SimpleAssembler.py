@@ -14,6 +14,7 @@ def readfile():
                 if count > 1 or line[i] == '\t':
                     listerror.append("invalid syntax error")
                     break
+
             listinp.append(line)
 
 def Label_Handling(input): #chckes for labels and halt
@@ -24,7 +25,7 @@ def Label_Handling(input): #chckes for labels and halt
     i = len(input)
     for j in range(0,i):
         split = input[j].split()
-        if split[0] not in Opp_Dict and split[0] != "var":
+        if split[0] not in Opp_Dict and split[0] != "var" and split[0] != "":
 
             if split[0][-1] == ":":
                 label_dict[split[0][:-1]] = counter
@@ -92,7 +93,7 @@ def d2b(num): #Converts decimal number to a binary number of 8 bits
     s = str(s)
     l = len(s)
     if len(s) < 8:
-        for i in range(0,l):
+        while len(s) < 8:
             s = "0" + s
 
     return s
@@ -151,7 +152,7 @@ def Assembler(input): #the main assembler function
                 if split[0] == "mov":
                     ok = split[2]
                     if ok in reg_add:
-                        binary = binary + ok
+                        binary = binary + reg_add[ok]
                     else:
                         listerror.append("Invalid register value")
 
@@ -241,13 +242,13 @@ label_dict ={}
 listout = []
 
 #input list with instructions
-listinp = []
+listinp = ["var x","add r1 R2 R3","hlt"]
 
 #list of errors generated
 listerror = []
 
 def main():
-    readfile()
+    #readfile()
     Label_Handling(listinp)
     Variable_Handling(listinp)
     Assembler(listinp)
