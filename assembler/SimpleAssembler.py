@@ -45,7 +45,7 @@ def Label_Handling(input): #chckes for labels and halt
                         if j == (i-1):
                             return
                         else:
-                            listerror.append("hlt is not at the end")
+                            listerror.append("hlt is not at the end " + str(j + 1))
                             return
 
             else:
